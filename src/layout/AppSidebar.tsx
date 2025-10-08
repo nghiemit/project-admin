@@ -1,25 +1,20 @@
+import React from "react";
 import { Link } from "react-router-dom";
-import {
-  ChevronDownIcon,
-  GridIcon,
-  HorizontaLDots,
-  PlugInIcon,
-  UserCircleIcon,
-} from "../icons";
+// import { GridIcon } from "../icons";
 
 const navItems = [
   {
-    icon: <GridIcon />,
+    // icon: <GridIcon />,
     name: "Dashboard",
     subItems: [{ name: "Ecommerce", path: "/" }],
   },
   {
-    icon: <UserCircleIcon />,
+    // icon: <UserCircleIcon />,
     name: "User Profile",
     path: "/profile",
   },
   {
-    icon: <PlugInIcon />,
+    // icon: <PlugInIcon />,
     name: "Authentication",
     subItems: [
       { name: "Sign In", path: "/signin" },
@@ -28,7 +23,7 @@ const navItems = [
   },
 ];
 
-export default function AppSidebar() {
+export const AppSidebar = () => {
   return (
     <aside className="sidebar-scroll fixed top-0 left-0 w-[290px] h-screen bg-white border-r border-gray-200 text-gray-900 overflow-y-auto z-50">
       {/* Logo */}
@@ -51,18 +46,18 @@ export default function AppSidebar() {
             {/* Main Menu */}
             <div>
               <h2 className="mb-3 text-xs uppercase text-gray-400 flex items-center gap-2">
-                <HorizontaLDots className="w-4 h-4" />
+                {/* <HorizontaLDots className="w-4 h-4" /> */}
                 Menu
               </h2>
               <ul className="flex flex-col gap-3">
                 {navItems.map((nav) => (
                   <li key={nav.name}>
                     <div className="flex items-center gap-3 text-gray-700 hover:text-brand-500 cursor-pointer">
-                      <span className="w-5 h-5">{nav.icon}</span>
+                      {/* <span className="w-5 h-5">{nav.icon}</span> */}
                       <span className="font-medium">{nav.name}</span>
-                      {nav.subItems && (
+                      {/* {nav.subItems && (
                         <ChevronDownIcon className="w-4 h-4 ml-auto" />
-                      )}
+                      )} */}
                     </div>
                     {nav.subItems && (
                       <ul className="ml-9 mt-2 space-y-1 menu-item-inactive">
@@ -90,4 +85,4 @@ export default function AppSidebar() {
       </div>
     </aside>
   );
-}
+};

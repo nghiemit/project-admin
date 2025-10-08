@@ -1,23 +1,24 @@
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { AppLayout } from "./layout/AppLayout";
-import { Home } from "./pages/Dashboard/Home";
-import SignUp from "./pages/AuthPages/SignUp";
+import { SignUp } from "./pages/AuthPages/SignUp";
+import { SignIn } from "./pages/AuthPages/SignIn";
 
 function App() {
   return (
-    <>
-      <Router>
-        <Routes>
-          <Route element={<AppLayout />}>
-            <Route index path="/" element={<Home />} />
-          </Route>
-          {/* Auth Layout */}
-          {/* <Route path="/signin" element={<SignIn />} /> */}
-          <Route path="/signup" element={<SignUp />} />
-        </Routes>
-      </Router>
-    </>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<AppLayout />}>
+          <Route path="" element={<h1>Dashboard</h1>} />
+          <Route path="product" element={<h1>Trang sản phẩm</h1>} />
+          <Route path="product/:id" element={<h1>Trang detail</h1>} />
+          <Route path="category" element={<h1>Trang category</h1>} />
+        </Route>
+        <Route path="signup" element={<SignUp />} />
+        <Route path="signin" element={<SignIn />} />
+
+      </Routes>
+    </BrowserRouter>
   );
 }
 

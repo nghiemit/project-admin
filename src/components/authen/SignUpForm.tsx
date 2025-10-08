@@ -1,11 +1,11 @@
-import { useState } from "react";
-import { Link } from "react-router";
-import { ChevronLeftIcon, EyeCloseIcon, EyeIcon } from "../../icons";
-import Label from "../form/Label";
-import Input from "../form/input/InputField";
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import { Label } from "../form/Label";
+import { InputField } from "../form/input/InputField";
 
-export default function SignUpForm() {
-  const [showPassword, setShowPassword] = useState<Boolean>(false);
+export const SignUpForm = () => {
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+
   return (
     <div className="flex flex-col flex-1 w-full overflow-y-auto lg:w-1/2 no-scrollbar">
       <div className="w-full max-w-md mx-auto mb-5 sm:pt-10">
@@ -13,7 +13,7 @@ export default function SignUpForm() {
           to="/"
           className="inline-flex items-center text-sm text-gray-500 transition-colors hover:text-gray-700"
         >
-          <ChevronLeftIcon className="size-5" />
+          {/* <ChevronLeftIcon className="size-5" /> */}
           Back to dashboard
         </Link>
       </div>
@@ -33,10 +33,10 @@ export default function SignUpForm() {
             <div className="space-y-5">
               <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
                 <div className="sm:col-span-1">
-                  <Label>
+                  <Label htmlFor="fname">
                     User Name<span className="text-error-500">*</span>
                   </Label>
-                  <Input
+                  <InputField
                     type="text"
                     id="fname"
                     name="fname"
@@ -48,7 +48,7 @@ export default function SignUpForm() {
                   <Label>
                     Phone<span className="text-error-500">*</span>
                   </Label>
-                  <Input
+                  <InputField
                     type="number"
                     id="lname"
                     name="lname"
@@ -61,7 +61,7 @@ export default function SignUpForm() {
                 <Label>
                   Email<span className="text-error-500">*</span>
                 </Label>
-                <Input
+                <InputField
                   type="email"
                   id="email"
                   name="email"
@@ -74,7 +74,7 @@ export default function SignUpForm() {
                   Password<span className="text-error-500">*</span>
                 </Label>
                 <div className="relative">
-                  <Input
+                  <InputField
                     placeholder="Enter your password"
                     type={showPassword ? "text" : "password"}
                   />
@@ -82,11 +82,11 @@ export default function SignUpForm() {
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute z-30 -translate-y-1/2 cursor-pointer right-4 top-1/2"
                   >
-                    {showPassword ? (
-                      <EyeIcon className="fill-gray-500 size-5" />
-                    ) : (
-                      <EyeCloseIcon className="fill-gray-500 size-5" />
-                    )}
+                    {showPassword
+                      ? //   <EyeIcon className="fill-gray-500 size-5" />
+                        "Ẩn"
+                      : //   <EyeCloseIcon className="fill-gray-500 size-5" />
+                        "Hiện"}
                   </span>
                 </div>
               </div>
@@ -114,4 +114,4 @@ export default function SignUpForm() {
       </div>
     </div>
   );
-}
+};

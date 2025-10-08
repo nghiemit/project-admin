@@ -1,12 +1,12 @@
-import type { ReactNode } from "react";
+import React, { type ReactNode } from "react";
 
-interface LabelProps {
+interface LableProps {
   htmlFor?: string;
-  children: ReactNode;
   className?: string;
+  children: ReactNode;
 }
 
-const Label = ({ htmlFor, children, className }: LabelProps) => {
+export const Label = ({ htmlFor, className, children }: LableProps) => {
   return (
     <label
       htmlFor={htmlFor}
@@ -16,5 +16,3 @@ const Label = ({ htmlFor, children, className }: LabelProps) => {
     </label>
   );
 };
-
-export default Label;

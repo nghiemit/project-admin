@@ -1,12 +1,10 @@
-import SignUpForm from "../../components/authen/SignUpForm";
-import AuthLayout from "./AuthPageLayout";
+import { AuthLayout } from "./AuthLayout";
+import { SignUpForm } from "../../components/authen/SignUpForm";
 
-export default function SignUp() {
+export const SignUp = () => {
   return (
-    <>
-      <AuthLayout>
+    <AuthLayout>
         <SignUpForm />
-      </AuthLayout>
-    </>
+    </AuthLayout>
   );
-}
+};
