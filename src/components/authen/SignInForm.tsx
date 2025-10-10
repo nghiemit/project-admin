@@ -7,10 +7,62 @@ import { Link } from "react-router";
 import { Label } from "../form/Label";
 import { InputField } from "../form/input/InputField";
 import Button from "../ui/button/Button";
-
+import { EyeCloseIcon, EyeIcon } from "../../icons";
+import { validateForm } from "../../utils/validateForm";
+const loginSchema = {
+  email: [
+    { required: true, message: "Email is required" },
+    { pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: "Invalid email format" },
+  ],
+  password: [
+    { required: true, message: "Password is required" },
+    { minLength: 6, message: "Password must be at least 6 characters" },
+    {
+      pattern: /^(?=.*[A-Z])(?=.*[!@#$%^&*(),.?":{}|<>])/,
+      message: "Ít nhất 1 chữ hoa, 1 ký tự đặc biệt,",
+    },
+  ],
+};
 export default function SignInForm() {
   const [showPassword, setShowPassword] = useState(false);
-  const [isChecked, setIsChecked] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [formDataSignIn, setFormDataSignIn] = useState({
+    email: "",
+    password: "",
+  });
+  const [errors, setErrors] = useState({
+    email: "",
+    password: "",
+  });
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormDataSignIn({
+      ...formDataSignIn,
+      [name]: value,
+    });
+  };
+  console.log(formDataSignIn, "formDataSignIn");
+  const hanldeSignin = async (e: React.FormEvent<HTMLFormElement>) => {
+    console.log("111");
+    e.preventDefault();
+    const { valid, errors } = validateForm(formDataSignIn, loginSchema);
+    console.log(errors,'errors');
+    
+    setErrors(errors);
+    if (!valid) return;
+    try {
+      console.log("Form submitted:", formDataSignIn);
+
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      alert("Login success!");
+    } catch (err) {
+      console.error("Login failed:", err);
+      alert("Something went wrong!");
+    } finally {
+      setIsLoading(false);
+    }
+  };
   return (
     <div className="flex flex-col flex-1">
       <div className="w-full max-w-md pt-10 mx-auto">
@@ -25,13 +77,23 @@ export default function SignInForm() {
       <div className="flex flex-col justify-center flex-1 w-full max-w-md mx-auto">
         <div>
           <div>
-            <form>
+            <form onSubmit={hanldeSignin}>
               <div className="space-y-6">
                 <div>
                   <Label>
                     Email <span className="text-error-500">*</span>{" "}
                   </Label>
-                  <InputField placeholder="info@gmail.com" />
+
+                  <InputField
+                    name="email"
+                    placeholder="info@gmail.com"
+                    onChange={handleChange}
+                  />
+                  {errors.email && (
+                    <p className="mt-1 text-sm text-error-500">
+                      {errors.email}
+                    </p>
+                  )}
                 </div>
                 <div>
                   <Label>
@@ -39,28 +101,29 @@ export default function SignInForm() {
                   </Label>
                   <div className="relative">
                     <InputField
+                      name="password"
                       type={showPassword ? "text" : "password"}
                       placeholder="Enter your password"
+                      onChange={handleChange}
                     />
                     <span
                       onClick={() => setShowPassword(!showPassword)}
                       className="absolute z-30 -translate-y-1/2 cursor-pointer right-4 top-1/2"
                     >
-                      {/* {showPassword ? (
+                      {showPassword ? (
                         <EyeIcon className="fill-gray-500 dark:fill-gray-400 size-5" />
                       ) : (
                         <EyeCloseIcon className="fill-gray-500 dark:fill-gray-400 size-5" />
-                      )} */}
+                      )}
                     </span>
                   </div>
                 </div>
+                {errors.password && (
+                  <p className="mt-1 text-sm text-error-500">
+                    {errors.password}
+                  </p>
+                )}
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    {/* <Checkbox checked={isChecked} onChange={setIsChecked} /> */}
-                    <span className="block font-normal text-gray-700 text-theme-sm dark:text-gray-400">
-                      Keep me logged in
-                    </span>
-                  </div>
                   <Link
                     to="/reset-password"
                     className="text-sm text-brand-500 hover:text-brand-600 dark:text-brand-400"
@@ -69,8 +132,8 @@ export default function SignInForm() {
                   </Link>
                 </div>
                 <div>
-                  <Button className="w-full" size="sm">
-                    Sign in
+                  <Button className="w-full" size="sm" disabled={isLoading}>
+                    {isLoading ? "Signing in..." : "Sign in"}
                   </Button>
                 </div>
               </div>

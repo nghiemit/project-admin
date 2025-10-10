@@ -1,20 +1,35 @@
 import React from "react";
 import { Link } from "react-router-dom";
-// import { GridIcon } from "../icons";
+import {
+  ChevronDownIcon,
+  GridIcon,
+  HorizontaLDots,
+  ListIcon,
+  PlugInIcon,
+  UserCircleIcon,
+} from "../icons";
 
 const navItems = [
   {
-    // icon: <GridIcon />,
+    icon: <GridIcon />,
     name: "Dashboard",
     subItems: [{ name: "Ecommerce", path: "/" }],
   },
   {
-    // icon: <UserCircleIcon />,
+    icon: <ListIcon />,
+    name: "Product Management",
+    subItems: [
+      { name: "List Product", path: "/list-product" },
+      { name: "Product", path: "/product" },
+    ],
+  },
+  {
+    icon: <UserCircleIcon />,
     name: "User Profile",
     path: "/profile",
   },
   {
-    // icon: <PlugInIcon />,
+    icon: <PlugInIcon />,
     name: "Authentication",
     subItems: [
       { name: "Sign In", path: "/signin" },
@@ -46,18 +61,18 @@ export const AppSidebar = () => {
             {/* Main Menu */}
             <div>
               <h2 className="mb-3 text-xs uppercase text-gray-400 flex items-center gap-2">
-                {/* <HorizontaLDots className="w-4 h-4" /> */}
+                <HorizontaLDots className="w-4 h-4" />
                 Menu
               </h2>
               <ul className="flex flex-col gap-3">
                 {navItems.map((nav) => (
                   <li key={nav.name}>
                     <div className="flex items-center gap-3 text-gray-700 hover:text-brand-500 cursor-pointer">
-                      {/* <span className="w-5 h-5">{nav.icon}</span> */}
+                      <span className="w-5 h-5">{nav.icon}</span>
                       <span className="font-medium">{nav.name}</span>
-                      {/* {nav.subItems && (
+                      {nav.subItems && (
                         <ChevronDownIcon className="w-4 h-4 ml-auto" />
-                      )} */}
+                      )}
                     </div>
                     {nav.subItems && (
                       <ul className="ml-9 mt-2 space-y-1 menu-item-inactive">
@@ -79,9 +94,6 @@ export const AppSidebar = () => {
             </div>
           </div>
         </nav>
-
-        {/* Widget */}
-        {/* <SidebarWidget /> */}
       </div>
     </aside>
   );

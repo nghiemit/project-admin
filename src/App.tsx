@@ -3,15 +3,18 @@ import "./App.css";
 import { AppLayout } from "./layout/AppLayout";
 import { SignUp } from "./pages/AuthPages/SignUp";
 import { SignIn } from "./pages/AuthPages/SignIn";
+import { Product } from "./pages/ProductManagement/Product";
+import { Home } from "./pages/Dashboard/Home";
+import { ListProduct } from "./pages/ProductManagement/ListProduct";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<AppLayout />}>
-          <Route path="" element={<h1>Dashboard</h1>} />
-          <Route path="product" element={<h1>Trang sản phẩm</h1>} />
-          <Route path="product/:id" element={<h1>Trang detail</h1>} />
+          <Route path="" element={(<Home />)} />
+          <Route path="/list-product" element={(<ListProduct />)} />
+          <Route path="/product" element={<Product />} />
           <Route path="category" element={<h1>Trang category</h1>} />
         </Route>
         <Route path="signup" element={<SignUp />} />
