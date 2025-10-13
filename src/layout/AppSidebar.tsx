@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import {
   ChevronDownIcon,
@@ -21,6 +21,7 @@ const navItems = [
     subItems: [
       { name: "List Product", path: "/list-product" },
       { name: "Product", path: "/product" },
+      { name: "Category", path: "/category" },
     ],
   },
   {
@@ -39,6 +40,15 @@ const navItems = [
 ];
 
 export const AppSidebar = () => {
+  const [openMenu, setOpenMenu] = useState<string | null>(null);
+
+  const toggleMenu = (name: string) => {
+    console.log(name,'name');
+    
+    setOpenMenu((prev) => (prev === name ? null : name));
+  };
+  console.log(openMenu,'openMenu');
+  
   return (
     <aside className="sidebar-scroll fixed top-0 left-0 w-[290px] h-screen bg-white border-r border-gray-200 text-gray-900 overflow-y-auto z-50">
       {/* Logo */}
@@ -64,18 +74,33 @@ export const AppSidebar = () => {
                 <HorizontaLDots className="w-4 h-4" />
                 Menu
               </h2>
-              <ul className="flex flex-col gap-3">
+              <ul className="space-y-2">
                 {navItems.map((nav) => (
                   <li key={nav.name}>
-                    <div className="flex items-center gap-3 text-gray-700 hover:text-brand-500 cursor-pointer">
+                    <div
+                      onClick={() => nav.subItems && toggleMenu(nav.name)}
+                      className="flex items-center gap-3 text-gray-700 hover:text-brand-500 cursor-pointer select-none"
+                    >
                       <span className="w-5 h-5">{nav.icon}</span>
                       <span className="font-medium">{nav.name}</span>
+
                       {nav.subItems && (
-                        <ChevronDownIcon className="w-4 h-4 ml-auto" />
+                        <ChevronDownIcon
+                          className={`w-4 h-4 ml-auto transition-transform duration-200 ${
+                            openMenu === nav.name ? "rotate-180" : ""
+                          }`}
+                        />
                       )}
                     </div>
+
                     {nav.subItems && (
-                      <ul className="ml-9 mt-2 space-y-1 menu-item-inactive">
+                      <ul
+                        className={`ml-9 mt-2 space-y-1 overflow-hidden transition-all duration-300 ${
+                          openMenu === nav.name
+                            ? "max-h-40 opacity-100"
+                            : "max-h-0 opacity-0"
+                        }`}
+                      >
                         {nav.subItems.map((sub) => (
                           <li key={sub.name}>
                             <Link

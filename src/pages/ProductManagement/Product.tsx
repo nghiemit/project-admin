@@ -37,6 +37,9 @@ export const Product = () => {
   const handleSwitchChangeDiscount = (checked: boolean) => {
     setIsShowDiscount(checked);
   };
+  const handleChangeUpload = (files: File[]) => {
+    console.log(files, "files");
+  };
   return (
     <>
       <PageBreadCrumb pageTitle="Thêm sản phẩm" />
@@ -119,7 +122,11 @@ export const Product = () => {
         </div>
         <div className="space-y-6">
           <ComponentCard title="Thêm ảnh sản phẩm">
-            <UploadComponent />
+            <UploadComponent
+              title="Thêm ảnh sản phẩm"
+              multiple={true}
+              onChangeFile={(files) => handleChangeUpload(files)}
+            />
           </ComponentCard>
         </div>
       </div>

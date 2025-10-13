@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 // import { ChevronLeftIcon, EyeCloseIcon, EyeIcon } from "../../icons";
 
 // import Checkbox from "../form/input/Checkbox";
@@ -7,8 +7,13 @@ import { Link } from "react-router";
 import { Label } from "../form/Label";
 import { InputField } from "../form/input/InputField";
 import Button from "../ui/button/Button";
-import { EyeCloseIcon, EyeIcon } from "../../icons";
+import { ChevronLeftIcon, EyeCloseIcon, EyeIcon } from "../../icons";
 import { validateForm } from "../../utils/validateForm";
+import { authService } from "../../services/authService";
+import { useDispatch } from "react-redux";
+import { loginSuccess } from "../../redux/features/authSlice";
+import { setAccessToken, setUser } from "../../utils/token";
+import { toast } from "react-toastify";
 const loginSchema = {
   email: [
     { required: true, message: "Email is required" },
@@ -22,13 +27,17 @@ const loginSchema = {
       message: "Ít nhất 1 chữ hoa, 1 ký tự đặc biệt,",
     },
   ],
+  role: [],
 };
 export default function SignInForm() {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [formDataSignIn, setFormDataSignIn] = useState({
     email: "",
     password: "",
+    role: "ADMIN",
   });
   const [errors, setErrors] = useState({
     email: "",
@@ -46,16 +55,23 @@ export default function SignInForm() {
     console.log("111");
     e.preventDefault();
     const { valid, errors } = validateForm(formDataSignIn, loginSchema);
-    console.log(errors,'errors');
-    
+    console.log(errors, "errors");
+
     setErrors(errors);
     if (!valid) return;
+    setIsLoading(true);
     try {
-      console.log("Form submitted:", formDataSignIn);
+      const res = await authService.signin(formDataSignIn);
+      const { success, accessToken, user } = res.data;
+      if (success) {
+        console.log(accessToken, "token", accessToken);
 
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      alert("Login success!");
+        dispatch(loginSuccess({ accessToken, user }));
+        setAccessToken(accessToken);
+        setUser(user);
+        toast.success("Đăng nhập thành công");
+        navigate("/");
+      }
     } catch (err) {
       console.error("Login failed:", err);
       alert("Something went wrong!");
@@ -65,15 +81,6 @@ export default function SignInForm() {
   };
   return (
     <div className="flex flex-col flex-1">
-      <div className="w-full max-w-md pt-10 mx-auto">
-        <Link
-          to="/"
-          className="inline-flex items-center text-sm text-gray-500 transition-colors hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
-        >
-          {/* <ChevronLeftIcon className="size-5" /> */}
-          Back to dashboard NGHIEM ĐZ
-        </Link>
-      </div>
       <div className="flex flex-col justify-center flex-1 w-full max-w-md mx-auto">
         <div>
           <div>

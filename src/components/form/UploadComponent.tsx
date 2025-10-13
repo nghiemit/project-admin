@@ -1,14 +1,24 @@
 import { useDropzone, type FileRejection } from "react-dropzone";
+import { ComponentCard } from "../common/ComponentCard";
 // import Dropzone from "react-dropzone";
-const UploadComponent = () => {
-  const onDrop = (acceptedFiles: File[],fileRejections:FileRejection[]) => {
-    console.log("Files dropped:", acceptedFiles,fileRejections);
+const UploadComponent = ({
+  title,
+  multiple,
+  onChangeFile,
+}: {
+  title: string;
+  multiple: boolean;
+  onChangeFile: (files: File[]) => void;
+}) => {
+  const onDrop = (acceptedFiles: File[], fileRejections: FileRejection[]) => {
+    console.log("Files dropped:", acceptedFiles, fileRejections);
     // Handle file uploads here
+    onChangeFile(acceptedFiles)
   };
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
-    maxFiles:3,
+    multiple,
     accept: {
       "image/png": [],
       "image/jpeg": [],
@@ -17,7 +27,8 @@ const UploadComponent = () => {
     },
   });
   return (
-    <div className="transition border border-gray-300 border-dashed cursor-pointer dark:hover:border-brand-500 dark:border-gray-700 rounded-xl hover:border-brand-500">
+    <ComponentCard title={title}>
+      <div className="transition border border-gray-300 border-dashed cursor-pointer dark:hover:border-brand-500 dark:border-gray-700 rounded-xl hover:border-brand-500">
         <form
           {...getRootProps()}
           className={`dropzone rounded-xl   border-dashed border-gray-300 p-7 lg:p-10
@@ -67,6 +78,7 @@ const UploadComponent = () => {
           </div>
         </form>
       </div>
+    </ComponentCard>
   );
 };
 

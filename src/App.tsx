@@ -6,20 +6,28 @@ import { SignIn } from "./pages/AuthPages/SignIn";
 import { Product } from "./pages/ProductManagement/Product";
 import { Home } from "./pages/Dashboard/Home";
 import { ListProduct } from "./pages/ProductManagement/ListProduct";
+import { ListCategory } from "./pages/Category/ListCategory";
+import { ToastContainer } from "react-toastify";
+import PublicRoute from "./routes/PublicRoute";
+import ProtectedRoute from "./routes/ProtectedRoute";
 
 function App() {
   return (
     <BrowserRouter>
+      <ToastContainer />
       <Routes>
-        <Route path="/" element={<AppLayout />}>
-          <Route path="" element={(<Home />)} />
-          <Route path="/list-product" element={(<ListProduct />)} />
-          <Route path="/product" element={<Product />} />
-          <Route path="category" element={<h1>Trang category</h1>} />
+        <Route element={<ProtectedRoute />}>
+          <Route path="/" element={<AppLayout />}>
+            <Route path="" element={<Home />} />
+            <Route path="/list-product" element={<ListProduct />} />
+            <Route path="/product" element={<Product />} />
+            <Route path="/category" element={<ListCategory />} />
+          </Route>
         </Route>
-        <Route path="signup" element={<SignUp />} />
-        <Route path="signin" element={<SignIn />} />
-
+        <Route element={<PublicRoute />}>
+          <Route path="signup" element={<SignUp />} />
+          <Route path="signin" element={<SignIn />} />
+        </Route>
       </Routes>
     </BrowserRouter>
   );
