@@ -9,45 +9,110 @@ import UploadComponent from "../../components/form/UploadComponent";
 import Button from "../../components/ui/button/Button";
 import { PlusIcon } from "../../icons";
 import { useNavigate } from "react-router-dom";
+import { useCategories } from "../Category/hooks/useCategories";
+// import type { CreateProductRq } from "../../types/product/productType";
+import { uploadFile } from "../../services/uploadFile";
+import { productServices } from "../../services/productServices";
+// import { productServices } from "../../services/productService";
+const baseURL = import.meta.env.VITE_API_URL || "http://localhost:3001";
 
 export const Product = () => {
-  const options = [
-    {
-      value: "5825983459834",
-      label: "Áo Thun",
-    },
-    {
-      value: "6456546546",
-      label: "Áo POLO",
-    },
-    {
-      value: "4234324234",
-      label: "Quần Jean",
-    },
-  ];
+  const { categories } = useCategories();
   const navigate = useNavigate();
-  const [isShowDiscount, setIsShowDiscount] = useState<boolean>(false);
+  const [product, setProduct] = React.useState({
+    name: "",
+    categoryId: 0,
+    description: "",
+    price: 0,
+    quantity: "",
+    isBestseller: 1,
+    isNewArrival: 1,
+    discount: 0,
+    images: [],
+    star: 5,
+  });
+  const [images, setImages] = React.useState<string[]>([]);
 
+  const [isShowDiscount, setIsShowDiscount] = useState<boolean>(false);
+  const [description, setDescription] = useState("");
   const handleSelectChange = (value: string) => {
     console.log(value, "xxxxxxxxxxx");
+    setProduct({ ...product, categoryId: +value });
   };
-  const handleSwitchChange = (checked: boolean) => {
-    console.log(checked);
+  const handleSwitchChangeBestseller = (checked: boolean) => {
+    setProduct({ ...product, isBestseller: +checked });
   };
+  const handleSwitchChangeNewArrival = (checked: boolean) => {
+    setProduct({ ...product, isNewArrival: +checked });
+  };
+
   const handleSwitchChangeDiscount = (checked: boolean) => {
     setIsShowDiscount(checked);
   };
-  const handleChangeUpload = (files: File[]) => {
-    console.log(files, "files");
+
+  const handleChangeUpload = async (files: File[]) => {
+    if (!files || files.length === 0) return;
+
+    try {
+      const uploadedUrls: string[] = [];
+
+      for (const file of Array.from(files)) {
+        const formData = new FormData();
+        formData.append("file", file);
+
+        const result = await uploadFile(formData);
+        if (result.status === 201) {
+          const imageUrl = `${baseURL}/${result.data.data.path}`;
+          uploadedUrls.push(imageUrl);
+        }
+      }
+
+      console.log("✅ Upload thành công:", uploadedUrls);
+      setImages(uploadedUrls);
+    } catch (error) {
+      console.error("❌ Upload thất bại:", error);
+    }
+  };
+  const handleChangeFormProduct = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value, name } = e.target;
+    setProduct({ ...product, [name]: value });
+  };
+  const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    console.log("xxxxxxxxxx", product);
+    const res = await productServices.createProduct({
+      ...product,
+      discount: +product.discount,
+      description,
+      images,
+    });
+    if (res.status === 201) {
+      setImages([]);
+      setProduct({
+        name: "",
+        categoryId: 0,
+        description: "",
+        price: 0,
+        quantity: "",
+        isBestseller: 1,
+        isNewArrival: 1,
+        discount: 0,
+        images: [],
+        star: 5,
+      });
+      setImages([]);
+      setDescription("");
+      navigate("/list-product");
+    }
   };
   return (
     <>
       <PageBreadCrumb pageTitle="Thêm sản phẩm" />
       <div className="flex justify-end mb-6">
         <Button
-          onClick={() => navigate("/product")}
           size="sm"
           endIcon={<PlusIcon />}
+          onClick={(e: React.MouseEvent<HTMLButtonElement>) => handleSubmit(e)}
         >
           Thêm sản phẩm
         </Button>
@@ -57,12 +122,33 @@ export const Product = () => {
           <ComponentCard title="Thông tin cơ bản">
             <div>
               <Label htmlFor="1">Tên sản phẩm</Label>
-              <InputField id="1" type="text" placeholder="Nhập tên sản phẩm" />
+              <InputField
+                id="1"
+                type="text"
+                placeholder="Nhập tên sản phẩm"
+                name="name"
+                onChange={handleChangeFormProduct}
+              />
+            </div>
+            <div>
+              <Label htmlFor="description">Mô Tả</Label>
+              <textarea
+                rows={5}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="Nhập mô tả sản phẩm"
+                name="description"
+                className="border w-full mt-4 rounded-xl p-3 text-sm"
+              />
             </div>
             <div>
               <Label htmlFor="2">Danh mục</Label>
               <Select
-                options={options}
+                options={categories.map((i) => {
+                  return {
+                    label: i.name,
+                    value: i.id,
+                  };
+                })}
                 onChange={(value) => handleSelectChange(value)}
                 placeholder="Chọn danh mục"
               />
@@ -74,6 +160,8 @@ export const Product = () => {
                   type="number"
                   id="3"
                   placeholder="Nhập giá sản phẩm"
+                  name="price"
+                  onChange={handleChangeFormProduct}
                 />
               </div>
               <div className="w-1/2">
@@ -82,6 +170,8 @@ export const Product = () => {
                   type="number"
                   id="4"
                   placeholder="Nhập số lượng sản phẩm"
+                  name="quantity"
+                  onChange={handleChangeFormProduct}
                 />
               </div>
             </div>
@@ -96,12 +186,12 @@ export const Product = () => {
               <Switch
                 label="Hàng giảm giá"
                 defaultChecked={true}
-                onChange={handleSwitchChange}
+                onChange={handleSwitchChangeBestseller}
               />
               <Switch
                 label="Hàng Hot"
                 defaultChecked={true}
-                onChange={handleSwitchChange}
+                onChange={handleSwitchChangeNewArrival}
               />
 
               {/* <Switch label="Disabled" disabled={true} /> */}
@@ -114,6 +204,8 @@ export const Product = () => {
                     type="number"
                     id="5"
                     placeholder="Nhập % giảm giá"
+                    name="discount"
+                    onChange={handleChangeFormProduct}
                   />
                 </div>
               )}
@@ -127,6 +219,19 @@ export const Product = () => {
               multiple={true}
               onChangeFile={(files) => handleChangeUpload(files)}
             />
+            <div className="pt-2 flex gap-2.5">
+              {images.length > 0 &&
+                images.map((img, idx) => (
+                  <img
+                    className="object-cover"
+                    key={idx}
+                    src={img}
+                    alt={`Ảnh ${idx}`}
+                    width={100}
+                    height={100}
+                  />
+                ))}
+            </div>
           </ComponentCard>
         </div>
       </div>

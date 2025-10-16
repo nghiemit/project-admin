@@ -6,7 +6,7 @@ interface ButtonProps {
   variant?: "primary" | "outline";
   startIcon?: ReactNode;
   endIcon?: ReactNode; 
-  onClick?: () => void; 
+  onClick?: (e:React.MouseEvent<HTMLButtonElement>) => void; 
   disabled?: boolean;
   className?: string; 
 }

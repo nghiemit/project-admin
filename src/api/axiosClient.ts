@@ -5,9 +5,17 @@ import type {
     AxiosResponse,
     InternalAxiosRequestConfig,
 } from "axios";
+import type { getAccessToken } from "../utils/token";
 
 const baseURL = import.meta.env.VITE_API_URL || "http://localhost:3001";
-
+declare module 'axios' {
+    export interface AxiosRequestConfig {
+        _retry?: boolean;
+        accessToken?: string;
+        pathParams?: Record<string, string>;
+        uId?: string;
+    }
+}
 interface RefreshResponse {
     accessToken: string;
 }
@@ -24,9 +32,16 @@ const axiosClient: AxiosInstance = axios.create({
 //  Request Interceptor
 axiosClient.interceptors.request.use(
     (config: InternalAxiosRequestConfig) => {
-        const token = localStorage.getItem("access_token");
+        const token = localStorage.getItem("accessToken");
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
+        }
+        if (config.url && config.baseURL) {
+            const currentUrl = new URL(config.url, config.baseURL);
+            Object.entries(config.pathParams || {}).forEach(([k, v]) => {
+                currentUrl.pathname = currentUrl.pathname.replace(`:${k}`, encodeURIComponent(v));
+            });
+            config.url = currentUrl.pathname + currentUrl.search;
         }
         return config;
     },
